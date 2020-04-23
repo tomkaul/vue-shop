@@ -16,29 +16,11 @@
         </div>
       </div>
       <hr />
-      <h3>Basic CRUD in Firebase and Vue</h3>
-      <div class="prduct-test">
-        <div class="form-group">
-          <input
-            type="text"
-            placeholder="Product Name"
-            v-model="product.name"
-            class="form-control"
-          />
-        </div>
-        <div class="form-group">
-          <input
-            type="text"
-            placeholder="Price"
-            v-model="product.price"
-            class="form-control"
-          />
-        </div>
-        <div class="form-group">
-          <button @click="addData" class="btn btn-primary">Add Data</button>
-        </div>
-        <hr />
-        <h3>Product List</h3>
+      <div class="product-test">
+        <h3 class="d-inline-block">Product List</h3>
+        <button @click="addNewProduct()" class="btn btn-primary float-right">
+          Add Product
+        </button>
         <table class="table table-striped">
           <thead class="thead-dark">
             <tr>
@@ -48,17 +30,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="product in products" :key="product.id">
-              <td>{{ product.data().name }}</td>
-              <td>{{ product.data().price }}</td>
+            <tr v-for="(product, id) in products" :key="id">
+              <td>{{ product.name }}</td>
+              <td>{{ product.price }}</td>
               <td>
                 <button @click="editProduct(product)" class="btn btn-primary">
                   Edit
                 </button>
-                <button
-                  @click="deleteProduct(product.id)"
-                  class="btn btn-danger"
-                >
+                <button @click="deleteProduct(product)" class="btn btn-danger">
                   Delete
                 </button>
               </td>
@@ -116,11 +95,20 @@
               Close
             </button>
             <button
+              @click="addProduct()"
+              type="button"
+              class="btn btn-primary"
+              v-if="modal == 'new'"
+            >
+              Save changes
+            </button>
+            <button
               @click="updateProduct()"
               type="button"
               class="btn btn-primary"
+              v-if="modal == 'edit'"
             >
-              Save changes
+              Apply changes
             </button>
           </div>
         </div>
@@ -146,81 +134,42 @@ export default {
         name: "",
         price: ""
       },
-      activeItem: null
+      modal: null
+    };
+  },
+  firestore() {
+    return {
+      products: db.collection("products")
     };
   },
   methods: {
-    watcher() {
-      db.collection("products").onSnapshot(querySnapshot => {
-        this.products = [];
-        querySnapshot.forEach(doc => {
-          this.products.push(doc);
-        });
-        console.log("Watcher: Products updated");
-    });
-    },
-    updateProduct() {
-      db.collection("products")
-        .doc(this.activeItem)
-        .update(this.product)
-        .then(() => {
-          $("#edit").modal("hide");
-          // this.readData();
-          console.log("Document successfully updated!");
-        })
-        .catch(function(error) {
-          // The document probably doesn't exist.
-          console.error("Error updating document: ", error);
-        });
-    },
-    editProduct(product) {
+    // Show modal dialog for adding new data
+    addNewProduct() {
+      this.modal = "new";
       $("#edit").modal("show");
-      this.product = product.data();
-      this.activeItem = product.id;
     },
-    readData() {
-      db.collection("products")
-        .get()
-        .then(querySnapshot => {
-          this.products = [];
-          querySnapshot.forEach(doc => {
-            this.products.push(doc);
-          });
-        });
+    // Add the new data
+    addProduct() {
+      this.$firestore.products.add(this.product);
+      $("#edit").modal("hide");
     },
+    // Show the modal dialog and fill in data to prepare a data update
+    editProduct(doc) {
+      this.modal = "edit";
+      this.product = Object.assign({}, doc);
+      $("#edit").modal("show");
+    },
+    // Update the data in the db
+    updateProduct() {
+      this.$firestore.products.doc(this.product.id).update(this.product);
+      $("#edit").modal("hide");
+    },
+    // Delete a doc in db
     deleteProduct(doc) {
-      if (confirm("Are you sure?")) {
-        db.collection("products")
-          .doc(doc)
-          .delete()
-          .then(() => {
-            console.log("Document successfully deleted!");
-          })
-          .catch(function(error) {
-            console.error("Error removing document: ", error);
-          });
-      } else {
-        alert("Deletion aborted");
-      }
-    },
-    addData() {
-      db.collection("products")
-        .add(this.product)
-        .then(docRef => {
-          console.log("Document written with ID: ", docRef.id);
-          this.clearFormData();
-        })
-        .catch(error => {
-          console.error("Error adding document: ", error);
-        });
-    },
-    clearFormData() {
-      // Object.assign(this.$data, this.$options.data.apply(this));
+      this.$firestore.products.doc(doc.id).delete();
     }
   },
-  created() {
-    this.watcher();
-  }
+  created() {}
 };
 </script>
 
