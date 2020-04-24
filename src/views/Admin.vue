@@ -23,16 +23,13 @@
             <div class="user-pic">
               <img
                 class="img-responsive img-rounded"
-                src="/img/user.png"
+                :src="userPhoto"
                 alt="User picture"
               />
             </div>
             <div class="user-info">
-              <span class="user-name"
-                >Jhon
-                <strong>Smith</strong>
-              </span>
-              <span class="user-role"> {{ email }} </span>
+              <p class="user-name first-letter">{{ user.displayName }}</p>
+              <span class="user-role"> {{ user.email }} </span>
               <span class="user-status">
                 <i class="fa fa-circle"></i>
                 <span>Online</span>
@@ -57,12 +54,13 @@
             </div>
           </div>
           <!-- sidebar-menu  -->
-          <div class=" sidebar-item sidebar-menu">
+          <div class="sidebar-item sidebar-menu">
+            <div class="header-menu">
+              <span>Menu</span>
+            </div>
+          </div>
+          <div class="sidebar-item sidebar-menu">
             <ul>
-              <li class="header-menu">
-                <span>Menu</span>
-              </li>
-
               <li>
                 <router-link to="/admin/overview">
                   <i class="fa fa-chart-line"></i>
@@ -81,12 +79,11 @@
                   <span>Orders</span>
                 </router-link>
               </li>
-
               <li>
-                <!-- <router-link to="/admin/profile">
+                <router-link to="/admin/profile">
                   <i class="fa fa-user"></i>
                   <span>Profile</span>
-                </router-link> -->
+                </router-link>
               </li>
               <li>
                 <a href="#" @click="logout()">
@@ -123,7 +120,11 @@ export default {
       fb.auth()
         .signOut()
         .then(() => {
-          console.log("User logged out successfully!");
+          window.Toast.fire({
+            type: "success",
+            title: "User logged out successfully!"
+          });
+          this.$router.replace("/");
         })
         .catch(err => {
           console.log(err);
@@ -132,24 +133,27 @@ export default {
   },
   data() {
     return {
-      email: "tom@me.com"
+      userPhoto: "",
+      user: null
     };
   },
   created() {
-    fb.auth().onAuthStateChanged(user => {
-      if (user) {
-        // User is signed in.
-        console.log(
-          user.displayName ? user.displayName : user.email + " signed in!"
-        );
-        console.log("email: " + user.email);
-        console.log("uid  : " + user.uid);
-      }
-    });
+    const user = fb.auth().currentUser;
+    if (user) {
+      // User is signed in.
+      this.userPhoto = user.photoURL ? user.photoURL : "/img/user.png";
+      this.user = user;
+      // console.log(this.userName + " signed in!");
+    }
   }
-  // components: {
-  //   Hero
-  //   // Products
-  // }
 };
 </script>
+
+<style scoped>
+p.first-letter {
+  text-transform: capitalize;
+}
+li {
+  float: left;
+}
+</style>

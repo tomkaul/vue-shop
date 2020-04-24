@@ -178,6 +178,17 @@ export default {
         .createUserWithEmailAndPassword(this.email, this.password)
         .then(user => {
           $("#login").modal("hide");
+          user
+            .updateProfile({
+              displayName: this.name,
+              photoURL: "https://example.com/jane-q-user/profile.jpg"
+            })
+            .then(function() {
+              // Update successful.
+            })
+            .catch(function(error) {
+              console.log(error);
+            });
 
           db.collection("profiles")
             .doc(user.user.uid)
