@@ -166,6 +166,7 @@ export default {
     },
     // Delete a doc in db
     deleteProduct(doc) {
+      console.log(doc.id);
       this.$firestore.products.doc(doc.id).delete();
     }
   },

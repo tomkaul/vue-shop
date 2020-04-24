@@ -80,6 +80,12 @@
                 </router-link>
               </li>
               <li>
+                <router-link to="/admin/charts">
+                  <i class="fa fa-chart-line"></i>
+                  <span>Charts</span>
+                </router-link>
+              </li>
+              <li>
                 <router-link to="/admin/profile">
                   <i class="fa fa-user"></i>
                   <span>Profile</span>

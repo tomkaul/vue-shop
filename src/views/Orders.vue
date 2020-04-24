@@ -196,7 +196,7 @@
 import { fb, db } from "../firebase";
 
 export default {
-  name: "Products",
+  name: "Orders",
   components: {
     // VueEditor
   },

@@ -5,17 +5,17 @@ import { fb } from "./firebase";
 import "popper.js";
 import "bootstrap";
 import "./assets/app.scss";
+// import { firestorePlugin } from "vuefire";
+// Vue.use(firestorePlugin, {
+//   key: "id",
+//   enumerable: true
+// });
 import VueFirestore from "vue-firestore";
 Vue.use(VueFirestore, {
   key: "id",
   enumerable: true
 });
 
-// jQuery gymnastics
-// import jQuery from "jquery";
-// import $ from "jquery";
-// window.$ = $;
-// window.jQuery = jQuery;
 import Swal from "sweetalert2";
 window.Swal = Swal;
 
@@ -32,9 +32,8 @@ Vue.component("Navbar", require("./components/Navbar.vue").default);
 Vue.config.productionTip = false;
 
 let app = "";
-
 // eslint-disable-next-line no-unused-vars
-fb.auth().onAuthStateChanged(function(user) {
+fb.auth().onAuthStateChanged(user => {
   if (!app) {
     new Vue({
       router,

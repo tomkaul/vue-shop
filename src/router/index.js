@@ -6,6 +6,7 @@ import Overview from "../views/Overview.vue";
 import Products from "../views/Products.vue";
 import Orders from "../views/Orders.vue";
 import Profile from "../views/Profile.vue";
+import Charts from "../views/Charts.vue";
 
 Vue.use(VueRouter);
 
@@ -34,6 +35,11 @@ const routes = [
         path: "orders",
         name: "orders",
         component: Orders
+      },
+      {
+        path: "charts",
+        name: "charts",
+        component: Charts
       },
       {
         path: "profile",

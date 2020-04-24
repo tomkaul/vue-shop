@@ -230,7 +230,7 @@
 import { fb, db } from "../firebase";
 
 export default {
-  name: "profile",
+  name: "Profile",
   props: {
     msg: String
   },
