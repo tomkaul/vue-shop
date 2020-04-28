@@ -176,12 +176,12 @@ export default {
     register() {
       fb.auth()
         .createUserWithEmailAndPassword(this.email, this.password)
-        .then(user => {
+        .then(() => {
           $("#login").modal("hide");
+          var user = fb.auth().currentUser;
           user
             .updateProfile({
-              displayName: this.name,
-              photoURL: "https://example.com/jane-q-user/profile.jpg"
+              displayName: this.name
             })
             .then(function() {
               // Update successful.
@@ -191,7 +191,7 @@ export default {
             });
 
           db.collection("profiles")
-            .doc(user.user.uid)
+            .doc(user.uid)
             .set({
               name: this.name
             })

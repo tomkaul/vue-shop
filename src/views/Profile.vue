@@ -238,15 +238,7 @@ export default {
   data() {
     return {
       profile: {},
-      account: {
-        // name: null,
-        // email: null,
-        // photoUrl: null,
-        // emailVerified: null,
-        // password: null,
-        // confirmPassword: null,
-        // uid: null
-      }
+      account: {}
     };
   },
 
@@ -279,7 +271,23 @@ export default {
     },
 
     updateProfile() {
-      this.$firestore.profile.update(this.profile);
+      // this.$firestore.profile.update(this.profile);
+      var user = fb.auth().currentUser;
+      db.collection("profiles")
+        .doc(user.uid)
+        // .set({
+        .update({
+          name: this.profile.name,
+          address: this.profile.address,
+          phone: this.profile.phone,
+          postCode: this.profile.postCode
+        })
+        .then(() => {
+          console.log("Added data to profile");
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     uploadImage(e) {
       if (e.target.files[0]) {
